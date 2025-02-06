@@ -37,7 +37,17 @@ jobs:
           npm install -g appium
           appium driver install xcuitest
           appium driver list --installed
+          
+      - name: Start iOS Simulator
+        run: |
+          UDID=$(xcrun simctl list devices available | grep 'iPhone' | head -1 | awk -F'[()]' '{print $2}')
+          echo "Booting iOS Simulator with UDID: $UDID"
+          xcrun simctl boot "$UDID"
+          sleep 15 # Wait for the simulator to boot
 
+      - name: Debug iOS Simulator Status
+        run: xcrun simctl list
+    
       # Step 5: Install Dependencies
       - name: Install Dependencies
         run: npm install
@@ -45,6 +55,7 @@ jobs:
       # Step 6: Start Appium Server
       - name: Start Appium Server
         run: appium --log-level debug --port 4723 &
+             npx wait-on tcp:4723
 
       # Step 7: Run WebdriverIO Tests
       - name: Run WebdriverIO Tests
