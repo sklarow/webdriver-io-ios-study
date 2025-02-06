@@ -8,6 +8,7 @@
             "dom"
         ],
         "types": [
+            "chai",
             "node",
             "@wdio/globals/types",
             "expect-webdriverio",
@@ -22,7 +23,9 @@
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
     },
     "include": [
         "test",

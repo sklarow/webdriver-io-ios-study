@@ -20,6 +20,7 @@
   "homepage": "https://github.com/sklarow/webdriver-io-ios-study#readme",
   "devDependencies": {
     "@testing-library/webdriverio": "^3.2.1",
+    "@types/chai": "^5.0.1",
     "@wdio/allure-reporter": "^9.6.3",
     "@wdio/appium-service": "^9.7.3",
     "@wdio/cli": "^9.7.3",
@@ -28,6 +29,7 @@
     "@wdio/spec-reporter": "^9.6.3",
     "@wdio/visual-service": "^6.3.1",
     "appium-xcuitest-driver": "^8.3.1",
+    "chai": "^5.1.2",
     "wdio-wait-for": "^3.0.11"
   }
 }
