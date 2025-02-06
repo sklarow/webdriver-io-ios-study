@@ -1,0 +1,67 @@
+name: WebdriverIO iOS Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  ios-tests:
+    name: Run WebdriverIO Tests on iOS Simulator
+    runs-on: macos-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Step 2: Detect Default Scheme
+      - name: Set Default Scheme
+        run: |
+          scheme_list=$(xcodebuild -list -json | tr -d "\n")
+          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
+          echo $default | cat >default
+          echo Using default scheme: $default
+
+      # Step 3: Detect iOS Simulator and Platform Version
+      - name: Detect iOS Simulator
+        id: simulator
+        run: |
+          device_name=$(xcrun simctl list devices available | grep 'iPhone' | head -1 | awk -F'[()]' '{print $1}' | awk '{$1=$1};1')
+          platform_version=$(xcrun simctl list runtimes | grep -o 'iOS [0-9.]*' | head -1 | awk '{print $2}')
+          echo "DEVICE_NAME=$device_name" >> $GITHUB_ENV
+          echo "PLATFORM_VERSION=$platform_version" >> $GITHUB_ENV
+
+      # Step 4: Install Dependencies
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install Dependencies
+        run: npm install
+
+      # Step 5: Start Appium Server
+      - name: Start Appium Server
+        run: appium --log-level debug --port 4723 &
+
+      # Step 6: Run WebdriverIO Tests
+      - name: Run WebdriverIO Tests
+        env:
+          DEVICE_NAME: ${{ env.DEVICE_NAME }}
+          PLATFORM_VERSION: ${{ env.PLATFORM_VERSION }}
+        run: npx wdio run wdio.conf.ts
+
+      # Step 7: Generate Allure Report
+      - name: Generate Allure Report
+        run: |
+          npm install -g allure-commandline
+          allure generate allure-results --clean -o allure-report
+
+      # Step 8: Upload Allure Report
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: allure-report

@@ -1,3 +1,6 @@
+const deviceName = process.env.DEVICE_NAME || 'iPhone 16 Pro';
+const platformVersion = process.env.PLATFORM_VERSION || '18.2';
+
 export const config: WebdriverIO.Config = {
     //
     // ====================
@@ -56,8 +59,8 @@ export const config: WebdriverIO.Config = {
         // capabilities for local Appium web tests on iOS
         platformName: 'iOS',
         browserName: '',
-        'appium:deviceName': 'iPhone 16 Pro',
-        'appium:platformVersion': '18.2',
+        'appium:deviceName': deviceName,
+        'appium:platformVersion': platformVersion,
         'appium:automationName': 'XCUITest',
         'appium:app': './app/AboutMe.app'
     }],
